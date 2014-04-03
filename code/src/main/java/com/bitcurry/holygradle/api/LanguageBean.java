@@ -1,4 +1,4 @@
-package com.bitcurry.anywhere.api;
+package com.bitcurry.holygradle.api;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
