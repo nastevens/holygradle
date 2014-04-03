@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>reveal.js - The HTML Presentation Framework</title>
+
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="reveal/css/reveal.min.css">
+    <link rel="stylesheet" href="reveal/css/theme/moon.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="reveal/lib/css/zenburn.css">
+
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+        if( window.location.search.match( /print-pdf/gi ) ) {
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = 'reveal/css/print/pdf.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        }
+    </script>
+
+    <style>div.codepath code {text-decoration:underline;}</style>
+
+    <!--[if lt IE 9]>
+    <script src="reveal/lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="reveal"> <div class="slides">
+
+<!-------------------->
+
+<!-- Start slides -->
+
+<section>
+<h1>Quest for the Holy Gradle</h1>
+<h3>Software Build Top-to-Bottom</h3>
+<p>
+    <small>
+        <a href="http://bitcurry.com">Nick Stevens</a> /
+        <a href="http://twitter.com/bitcurry">@bitcurry</a>
+    </small>
+</p>
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Who Am I?</h2>
+<ul>
+    <li class="fragment">Embedded Systems Programmer by Day</li>
+    <li class="fragment">Programming Language Polyglot by Night</li>
+    <li class="fragment">Sickly Fascinated with Building Software</li>
+</ul>
+
+<aside class="notes">
+    <ul>
+        <li>Embedded Systems Programmer by Day</li>
+        <li>Programming Language Polyglot by Night</li>
+        <li>Sickly Fascinated with Building Software</li>
+    <ul>
+</aside>
+
+</section>
+
+<!-------------------->
+
+<section>
+<h2>What Is Gradle?</h2>
+    <p class="fragment current-visible">Build scripting for the JVM</p>
+    <p class="fragment current-visible">Build scripting for multiple languages</p>
+    <p class="fragment current-visible">Groovy-based domain-specific language for software builds</p>
+
+<aside class="notes">
+    <ol>
+        <li>Accurate but incomplete. Gradle supports more than just JVM languages.</li>
+        <li>A little better, but "scripting" isn't quite right</li>
+        <li>A mouthful, but the general idea</li>
+    </ol>
+
+    <ul>
+        <li>Gradle is not configuration</li>
+        <li>Basic build handled by config</li>
+        <li>Groovy exists if needed - difficult to paint into a corner</li>
+    </ul>
+</aside>
+
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Our Goals Today</h2>
+<ul>
+    <li class="fragment">Build a REST webservice using Java</li>
+    <li class="fragment">Deploy debug webservice to local HTTP server</li>
+    <li class="fragment">Test the webservice using Groovy</li>
+    <li class="fragment">Add static webpage content</li>
+    <li class="fragment">Add JQuery dependency</li>
+    <li class="fragment">Compile CoffeeScript to JavaScript</li>
+    <li class="fragment">Collect and minify JavaScript</li>
+    <li class="fragment">Combine all artifacts into a production WAR file</li>
+</ul>
+
+<p class="fragment" style="padding-top:1em">
+    All of this will be done in an environment with only the JDK installed, using a single command
+</p>
+
+<aside class="notes">
+    <p>Today I want to show you what Gradle is capable of</p>
+</aside>
+
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Demonstration</h2>
+<aside class="notes">
+    <ul>
+        <li>Build and run using 'gradle runDebug'</li>
+        <li>Show generation of production jar</li>
+    </ul>
+</aside>
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Gradle Bootcamp</h2>
+<ul>
+    <li class="fragment">Basic Gradle structures: <u>projects</u> and <u>tasks</u></li>
+    <li class="fragment">Build begins with contents of <code>build.gradle</code> file</li>
+    <li class="fragment">Gradle plugins provide <u>conventions</u></li>
+    <li class="fragment">Conventions expose varying amounts of configuration</li>
+</ul>
+
+<aside class="notes">
+    <p>Projects are collections of tasks. Tasks can have dependencies, inputs, and outputs. Most
+    standard tasks are handled by conventions - a lot of times the conventions will "just make
+    sense".</p>
+</aside>
+
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Building Java</h2>
+
+<pre><code class="java" data-trim>
+// build.gradle
+apply plugin: 'java'
+</code></pre>
+
+<h3 style="margin-top:1em">What does that give us?</h3>
+<div class="codepath">
+    <ul>
+        <li>Java source in <code>src/main/java</code></li>
+        <li>Java tests in <code>src/test/java</code></li>
+        <li>Can build and run tests with <code>gradle build</code></li>
+    </ul>
+</div>
+
+<aside class="notes">
+    <ol>
+        <li>Create new directory<li>
+        <li>Create source directory</li>
+        <li>Create the following Java source file</li>
+    </ol>
+    <pre><code class="java">
+public class HelloWorld {
+    public static void main(String... args) {
+        System.out.println("Imagine Whirled Peas");
+    }
+}
+    </code></pre>
+    <p>Build with gradle build</p>
+</aside>
+
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Getting Dependencies</h2>
+
+<pre><code class="java" data-trim>
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.glassfish.jersey.core',
+            name: 'jersey-server',
+            version: '2.7'
+    compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.7'
+    compile 'org.glassfish.jersey.media:jersey-media-moxy:2.7'
+}
+</code></pre>
+
+<aside class="notes">
+    From here, going to jump into making small Java code files
+    to implement our webservice
+</aside>
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Groovy Bootcamp</h2>
+<p>Valid Java == Valid Groovy</p>
+<ul>
+    <li>Built-in Lists and Maps</li>
+    <li>Closures</li>
+    <li>GString</li>
+    <li>Greatly reduced syntax requirements</li>
+</ul>
+
+<h3 style="margin-top:2em" class="fragment">
+To the <strike>batmobile</strike> groovysh!
+</h3>
+
+<aside class="notes">
+    <p>Obviously a lot more, but these concepts allow working with Gradle</p>
+    <ul>
+        <li>Show lists, maps, closures, GStrings in GroovySh</li>
+        <li>Show syntax reduction
+        <ul>
+            <li> apply plugin: 'java' is actually apply([plugin:'java']) </li>
+            <li> [ ] around maps and lists are often optional</li>
+            <li> Parens around function parameters not required</li>
+            <li> function(..., Closure closure) can be written function(...) { }</li>
+        </ul>
+        </li>
+    </ul>
+</aside>
+</section>
+
+<!-------------------->
+
+<section>
+<h2>The Gradle Wrapper</h2>
+
+<pre><code class="java" data-trim>
+// build.gradle
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.9'
+}
+</code></pre>
+
+<aside class="notes">
+    This will be the first time that closures and maps are
+    introduced so I'll want to talk about the elements of
+    this code
+</aside>
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Deploy Webservice</h2>
+<a>https://github.com/Khoulaiz/gradle-jetty-eclipse-plugin</a>
+
+<pre><code class="java" data-trim>
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile 'com.sahlbach.gradle:gradle-jetty-eclipse-plugin:1.9.+'
+    }
+}
+
+apply plugin: 'war'
+apply plugin: 'jettyEclipse'
+</code></pre>
+
+<div class="codepath">
+    <p>Run <code>./gradlew build war jettyEclipseRun</code></p>
+    <p><a href="http://localhost:8080">http://localhost:8080</a></p>
+</div>
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Descriptive Task Name</h2>
+
+<pre><code class="java" data-trim>
+task runDebug(dependsOn: [tasks.build, tasks.war]) {
+    tasks.jettyEclipseRun.execute()
+}
+</code></pre>
+
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Testing with Groovy</h2>
+
+<pre><code class="java" data-trim>
+apply plugin: 'groovy'
+
+dependencies {
+    testCompile 'org.glassfish.jersey.core:jersey-client:2.7'
+    testCompile 'org.glassfish.jersey.test-framework.providers:' +
+                'jersey-test-framework-provider-jetty:2.7'
+                /* ^ developer paid by character in package name? */
+
+    testCompile 'org.codehaus.groovy:groovy-all:2.2.2'
+    testCompile 'junit:junit:4.11'
+}
+</code></pre>
+
+<aside class="notes">
+    Jump over to code for groovy test after slide
+</aside>
+
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Add Static Web Content</h2>
+<p>Put it in <code>src/main/webapp</code></p>
+<p class="fragment" style="margin-top:3em">Have a beer!</p>
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Add JQuery Library</h2>
+<p><a href="http://webjars.org">webjars.org</a></p>
+
+<pre><code class="java" data-trim>
+dependencies {
+    runtime 'org.webjars:jquery:2.1.0-2'
+}
+</code></pre>
+
+<pre><code class="html" data-trim>
+<script src="webjars/jquery/2.1.0/jquery.min.js"></script>
+</code></pre>
+
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Compiling CoffeeScript</h2>
+<ul>
+    <li>Incubating CoffeeScript feature in Gradle core</li>
+    <li>Write a custom task around WRO4J</li>
+</ul>
+
+<pre><code class="java" data-trim>
+class CompileCoffeeScript extends DefaultTask {
+    @InputDirectory
+    def srcDir = "src/main/coffee"
+
+    @OutputDirectory
+    def destDir = "${buildDir}/js"
+
+    @TaskAction
+    void doCompile() {
+        /* ... */
+    }
+}
+</code></pre>
+
+</section>
+
+<!-------------------->
+
+<section>
+<h2>CoffeeScript (cont)</h2>
+<ul>
+    <li>buildSrc directory</li>
+</ul>
+
+<pre><code class="java" data-trim>
+task compileCoffee(type: CompileCoffeeScript) {
+    srcDir = file('src/main/coffee')
+    destDir = new File($buildDir, 'js')
+}
+</code></pre>
+
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Combine/Minify JavaScript</h2>
+
+<pre><code class="java" data-trim>
+combineJs {
+    source = tasks.compileCoffee
+    dest = new File(buildDir, 'all.js')
+}
+
+minifyJs {
+    source = tasks.combineJs
+    dest = new File(buildDir, 'all.min.js')
+    sourceMap = new File(buildDir, 'all.sourcemap.json')
+}
+
+tasks.combineJs.dependsOn tasks.compileCoffee
+tasks.minifyJs.dependsOn tasks.combineJs
+</code></pre>
+
+<aside class="notes">
+    TODO: Probably don't want to combine/minify debug Javascript - do it for production only
+</aside>
+
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Production WAR</h2>
+
+<pre><code class="java" data-trim>
+task buildProd(dependsOn: [war]) &lt;&lt; {
+    ...
+}
+
+task deploy(dependsOn: tasks.buildProd) &lt;&lt; {
+    ...
+}
+</code></pre>
+
+</section>
+
+<!-------------------->
+
+<section>
+<h2>Credit/Links</h2>
+<p style="margin-top:1em"><a href="http://gradle.org">gradle.org</a></p>
+<p><a href="http://https://github.com/hakimel/reveal.js/">
+    reveal.js  [http://github.com/hakimel/reveal.js]</a>
+</p>
+</section>
+
+<!-------------------->
+</div> </div>
+
+<!-------------------->
+
+<!-- reveal.js Configuration -->
+<script src="reveal/lib/js/head.min.js"></script>
+<script src="reveal/js/reveal.min.js"></script>
+
+<script>
+
+    // Full list of configuration options available here:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        controls: false,
+        progress: true,
+        history: true,
+        center: true,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Parallax scrolling
+        // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+        // parallaxBackgroundSize: '2100px 900px',
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+            { src: 'reveal/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+            { src: 'reveal/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+            { src: 'reveal/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+            { src: 'reveal/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+            { src: 'reveal/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+            { src: 'reveal/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+    });
+
+
+</script>
+
+</body>
+</html>
