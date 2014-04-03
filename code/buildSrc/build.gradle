@@ -1,0 +1,10 @@
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile 'ro.isdc.wro4j:wro4j-extensions:1.7.4'
+    compile 'com.sahlbach.gradle:gradle-jetty-eclipse-plugin:1.9.+'
+    compile 'com.eriwen:gradle-js-plugin:1.9.0'
+}

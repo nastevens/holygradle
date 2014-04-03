@@ -1,0 +1,67 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'war'
+apply plugin: 'jettyEclipse'
+apply plugin: 'js'
+
+// Adds 'clean' and 'assemble' to custom tasks
+apply plugin: 'base'
+
+version = '1.0'
+
+// Java compatability settings
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    def jerseyUri = 'org.glassfish.jersey'
+    def jerseyVersion = '2.7'
+    compile "${jerseyUri}.core:jersey-server:${jerseyVersion}"
+    compile "${jerseyUri}.containers:jersey-container-servlet:${jerseyVersion}"
+    compile "${jerseyUri}.media:jersey-media-moxy:${jerseyVersion}"
+
+    testCompile "${jerseyUri}.core:jersey-client:${jerseyVersion}"
+    testCompile "${jerseyUri}.test-framework.providers:jersey-test-framework-provider-jetty:${jerseyVersion}"
+
+    testCompile 'org.codehaus.groovy:groovy-all:2.2.2'
+    testCompile 'junit:junit:4.11'
+
+    runtime 'org.webjars:jquery:2.1.0-2'
+
+}
+
+task launchDebug(dependsOn: [tasks.build, tasks.war]) << {
+    tasks.jettyEclipseRun.execute()
+}
+
+task compileCoffee(type: CompileCoffeeScript) {
+    srcDir = file('src/main/coffee')
+    outputDir = file('build/js')
+}
+
+combineJs {
+    source = tasks.compileCoffee
+    dest = new File(buildDir, 'all.js')
+}
+
+minifyJs {
+    source = tasks.combineJs
+    dest = new File(buildDir, 'all.min.js')
+    sourceMap = new File(buildDir, 'all.sourcemap.json')
+}
+
+tasks.combineJs.dependsOn tasks.compileCoffee
+tasks.minifyJs.dependsOn tasks.combineJs
+
+war {
+    from tasks.minifyJs
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.9'
+}
