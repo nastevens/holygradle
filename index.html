@@ -64,13 +64,16 @@
 <ul>
     <li class="fragment">Embedded Systems Programmer by Day</li>
     <li class="fragment">Programming Language Polyglot by Night</li>
+    <li class="fragment">Vim user</li>
     <li class="fragment">Sickly Fascinated with Building Software</li>
 </ul>
 
 <aside class="notes">
     <ul>
         <li>Embedded Systems Programmer by Day</li>
-        <li>Programming Language Polyglot by Night</li>
+        <li>Programming Language Polyglot by Night
+            Bruce Tate - Seven Languages in Seven Weeks</li>
+        <li>Vim user</li>
         <li>Sickly Fascinated with Building Software</li>
     <ul>
 </aside>
@@ -81,14 +84,14 @@
 
 <section>
 <h2>What Is Gradle?</h2>
-    <p class="fragment current-visible">Build scripting for the JVM</p>
-    <p class="fragment current-visible">Build scripting for multiple languages</p>
+    <p class="fragment current-visible">Build configuration tool for the JVM</p>
+    <p class="fragment current-visible">Build configuration tool for multiple languages</p>
     <p class="fragment current-visible">Groovy-based domain-specific language for software builds</p>
 
 <aside class="notes">
     <ol>
         <li>Accurate but incomplete. Gradle supports more than just JVM languages.</li>
-        <li>A little better, but "scripting" isn't quite right</li>
+        <li>A little better, but "configuration" isn't quite right</li>
         <li>A mouthful, but the general idea</li>
     </ol>
 
@@ -107,17 +110,21 @@
 <h2>Our Goals Today</h2>
 <ul>
     <li class="fragment">Build a REST webservice using Java</li>
-    <li class="fragment">Deploy debug webservice to local HTTP server</li>
-    <li class="fragment">Test the webservice using Groovy</li>
+    <li class="fragment">Debug webservice on local HTTP server</li>
+    <li class="fragment">Unit test the webservice using Groovy</li>
     <li class="fragment">Add static webpage content</li>
     <li class="fragment">Add JQuery dependency</li>
     <li class="fragment">Compile CoffeeScript to JavaScript</li>
     <li class="fragment">Collect and minify JavaScript</li>
-    <li class="fragment">Combine all artifacts into a production WAR file</li>
+    <li class="fragment">Combine all artifacts into a WAR file</li>
 </ul>
 
 <p class="fragment" style="padding-top:1em">
-    All of this will be done in an environment with only the JDK installed, using a single command
+    All done in an environment with only the JDK installed*
+</p>
+
+<p class="fragment" style="padding-top:1em">
+    Go from 'git clone' to running debug server in <i>one command</i>
 </p>
 
 <aside class="notes">
@@ -145,14 +152,18 @@
 <ul>
     <li class="fragment">Basic Gradle structures: <u>projects</u> and <u>tasks</u></li>
     <li class="fragment">Build begins with contents of <code>build.gradle</code> file</li>
-    <li class="fragment">Gradle plugins provide <u>conventions</u></li>
-    <li class="fragment">Conventions expose varying amounts of configuration</li>
+    <li class="fragment">Gradle plugins provide <u>conventions</u>, <u>tasks</u>, and <u>configurations</u></li>
+    <li class="fragment">Plugins expose varying amounts of configuration</li>
+    <li class="fragment">In the end though <i>everything is code</i></li>
 </ul>
 
 <aside class="notes">
-    <p>Projects are collections of tasks. Tasks can have dependencies, inputs, and outputs. Most
-    standard tasks are handled by conventions - a lot of times the conventions will "just make
-    sense".</p>
+    <ul>
+        <li>Tasks similar to maven goals or ant tasks</li>
+        <li>Projects are collections of tasks</li>
+        <li>Conventions often just "make sense"</li>
+        <li>Everything is code - means everything can be modified</li>
+    </ul>
 </aside>
 
 </section>
@@ -170,26 +181,25 @@ apply plugin: 'java'
 <h3 style="margin-top:1em">What does that give us?</h3>
 <div class="codepath">
     <ul>
-        <li>Java source in <code>src/main/java</code></li>
-        <li>Java tests in <code>src/test/java</code></li>
+        <li>Convention for Java source in <code>src/main/java</code></li>
+        <li>Convention for Java tests in <code>src/test/java</code></li>
         <li>Can build and run tests with <code>gradle build</code></li>
     </ul>
 </div>
 
 <aside class="notes">
     <ol>
-        <li>Create new directory<li>
+        <li>Create new directory</li>
         <li>Create source directory</li>
         <li>Create the following Java source file</li>
     </ol>
-    <pre><code class="java">
-public class HelloWorld {
-    public static void main(String... args) {
-        System.out.println("Imagine Whirled Peas");
-    }
-}
-    </code></pre>
-    <p>Build with gradle build</p>
+<pre><code class="java">
+package com.bitcurry.holynow;
+public class Demo { public static void main(String... args) {
+        System.out.println("Imagine Whirled Peas"); } }
+mainClassName = 'com.bitcurry.holynow.HolyNow'
+</code></pre>
+
 </aside>
 
 </section>
@@ -200,6 +210,7 @@ public class HelloWorld {
 <h2>Getting Dependencies</h2>
 
 <pre><code class="java" data-trim>
+// build.gradle
 repositories {
     mavenCentral()
 }
@@ -222,6 +233,24 @@ dependencies {
 <!-------------------->
 
 <section>
+<h2>The Gradle Wrapper</h2>
+
+<pre><code class="java" data-trim>
+// build.gradle
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.9'
+}
+</code></pre>
+
+<aside class="notes">
+    This will be the first time that closures and maps are introduced so I'll
+    want to talk about the elements of this code
+</aside>
+</section>
+
+<!-------------------->
+
+<section>
 <h2>Groovy Bootcamp</h2>
 <p>Valid Java == Valid Groovy</p>
 <ul>
@@ -236,7 +265,6 @@ To the <strike>batmobile</strike> groovysh!
 </h3>
 
 <aside class="notes">
-    <p>Obviously a lot more, but these concepts allow working with Gradle</p>
     <ul>
         <li>Show lists, maps, closures, GStrings in GroovySh</li>
         <li>Show syntax reduction
@@ -254,20 +282,23 @@ To the <strike>batmobile</strike> groovysh!
 <!-------------------->
 
 <section>
-<h2>The Gradle Wrapper</h2>
+<h2>Expanded Dependencies</h2>
 
 <pre><code class="java" data-trim>
-// build.gradle
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.9'
-}
+// repositories and dependencies are functions that takes a closure
+Closure repositoryConfig = { mavenCentral() }
+repositories(repositoryConfig)
+
+dependencies({
+    // compile is an overloaded function that works on a map or a string
+    compile([group: 'org.glassfish.jersey.core',
+             name: 'jersey-server', version: '2.7'])
+    compile('org.glassfish.jersey.containers:jersey-container-servlet:2.7')
+    compile('org.glassfish.jersey.media:jersey-media-moxy:2.7')
+})
+
 </code></pre>
 
-<aside class="notes">
-    This will be the first time that closures and maps are
-    introduced so I'll want to talk about the elements of
-    this code
-</aside>
 </section>
 
 <!-------------------->
@@ -359,6 +390,10 @@ dependencies {
 <script src="webjars/jquery/2.1.0/jquery.min.js"></script>
 </code></pre>
 
+<aside class="notes">
+    <p>Make sure to talk about jars getting auto-added to the classpath to make this work</p>
+</aside>
+
 </section>
 
 <!-------------------->
@@ -391,11 +426,16 @@ class CompileCoffeeScript extends DefaultTask {
 
 <section>
 <h2>CoffeeScript (cont)</h2>
-<ul>
-    <li>buildSrc directory</li>
-</ul>
 
 <pre><code class="java" data-trim>
+// buildSrc/build.gradle
+dependencies {
+    compile 'ro.isdc.wro4j:wro4j-extensions:1.7.4'
+}
+</code></pre>
+
+<pre><code class="java" data-trim>
+// build.gradle
 task compileCoffee(type: CompileCoffeeScript) {
     srcDir = file('src/main/coffee')
     destDir = new File($buildDir, 'js')
@@ -410,6 +450,15 @@ task compileCoffee(type: CompileCoffeeScript) {
 <h2>Combine/Minify JavaScript</h2>
 
 <pre><code class="java" data-trim>
+// buildSrc/build.gradle
+dependencies {
+    compile 'com.eriwen:gradle-js-plugin:1.9.0'
+}
+</code></pre>
+<pre><code class="java" data-trim>
+// build.gradle
+apply plugin: 'js'
+
 combineJs {
     source = tasks.compileCoffee
     dest = new File(buildDir, 'all.js')
@@ -426,7 +475,6 @@ tasks.minifyJs.dependsOn tasks.combineJs
 </code></pre>
 
 <aside class="notes">
-    TODO: Probably don't want to combine/minify debug Javascript - do it for production only
 </aside>
 
 </section>
@@ -434,18 +482,7 @@ tasks.minifyJs.dependsOn tasks.combineJs
 <!-------------------->
 
 <section>
-<h2>Production WAR</h2>
-
-<pre><code class="java" data-trim>
-task buildProd(dependsOn: [war]) &lt;&lt; {
-    ...
-}
-
-task deploy(dependsOn: tasks.buildProd) &lt;&lt; {
-    ...
-}
-</code></pre>
-
+    <h1>Questions?</h1>
 </section>
 
 <!-------------------->
